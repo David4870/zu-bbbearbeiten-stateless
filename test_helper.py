@@ -2,6 +2,18 @@ import datetime
 import pytest
 import random
 import helper
+from flask import Flask
+
+
+@pytest.fixture(scope="session", autouse=True)
+def init_db():
+    app = Flask(__name__)
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///todo_test.db"
+    app.app_context().push()
+    helper.db.init_app(app)
+    helper.db.create_all()
+    yield
+    helper.db.drop_all()
 
 
 def test_download():
@@ -59,7 +71,7 @@ def test_category():
         helper.add(todo[0], date=f"2023-{month}-{day}", category=todo[1])
 
     # Then: They ought to have their categories
-    for item in helper.items:
+    for item in helper.get_all()[-4:]:
         categories = [todo[1] for todo in todos]
         assert item.category in categories
 
@@ -82,7 +94,7 @@ def test_description():
         helper.add(todo[0], description=todo[1])
 
     # Then: They should have descriptions
-    for item in helper.items:
+    for item in helper.get_all()[-2:]:
         assert item.description is not None
 
 
@@ -100,8 +112,9 @@ def test_sort():
         helper.add(todo[0], todo[1])
 
     # Then: They should be sorted by date
-    for i in range(len(helper.items) - 1):
-        assert helper.items[i].date <= helper.items[i + 1].date
+    items = helper.get_all()[-4:]
+    for i, item in enumerate(items[:-1]):
+        assert item.date <= items[i + 1].date
 
 
 def test_add():
@@ -113,5 +126,5 @@ def test_add():
     helper.add(text, date)
 
     # Then: The most recently added to-do should have a date
-    item = helper.items[-1]
+    item = helper.get_all()[-1]
     assert isinstance(item.date, datetime.date)

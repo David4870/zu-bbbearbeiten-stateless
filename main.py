@@ -1,8 +1,11 @@
 from flask import Flask, Response, redirect, render_template, request, url_for
+from database import db
 
 import helper
 
 app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///todo.db"
+db.init_app(app)
 
 
 @app.route("/getCSV")

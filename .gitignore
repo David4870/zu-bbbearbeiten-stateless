@@ -1,3 +1,5 @@
+.DS_Store
+instance/*
 __pycache__
 .pytest_cache
 build
