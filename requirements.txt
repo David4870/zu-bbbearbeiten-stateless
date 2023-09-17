@@ -1,4 +1,6 @@
+pytest
 Flask
 gunicorn
 flask-sqlalchemy
-pytest
+psycopg2
+python-dotenv

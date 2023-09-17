@@ -1,6 +1,4 @@
 import datetime
-import operator
-from dataclasses import dataclass
 import io
 import csv
 from flask_sqlalchemy import SQLAlchemy
@@ -57,11 +55,14 @@ def add(text, date=None, category=None, description=None):
     db.session.commit()
 
 
-def get_all():
-    return [item for item in Item.query.order_by(Item.date.asc(), Item.category.desc())]
+def get_all(sorted=False):
+    if sorted:
+        return [item for item in Item.query.order_by(Item.date.asc(), Item.category.desc())]
+    else:
+        return Item.query.all()
 
 
-def get(index):
+def get(id):
     return Item.query.get(id)
 
 

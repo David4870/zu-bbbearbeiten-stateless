@@ -112,7 +112,7 @@ def test_sort():
         helper.add(todo[0], todo[1])
 
     # Then: They should be sorted by date
-    items = helper.get_all()[-4:]
+    items = helper.get_all(sorted=True)[-4:]
     for i, item in enumerate(items[:-1]):
         assert item.date <= items[i + 1].date
 
