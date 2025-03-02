@@ -29,12 +29,12 @@ jobs:
         run: pyinstaller -F --add-data="templates;templates" --add-data="helper.py;." main.py
 
       - name: Rename EXE
-        run: Rename-Item -Path dist\main.exe -NewName main.exe
+        run: Rename-Item -Path dist\main.exe -NewName windows_binary.exe
 
       - name: Upload EXE as Release Asset
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/main.exe
+          files: dist/windows_binary.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -61,11 +61,11 @@ jobs:
           run: pyinstaller -F --add-data="templates:templates" --add-data="helper.py:." main.py
 
         - name: Rename Linux Binary
-          run: mv dist/main main
+          run: mv dist/main linux_binary
 
         - name: Upload Linux Binary to Release
           uses: softprops/action-gh-release@v2
           with:
-            files: dist/main
+            files: dist/linux_binary
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
