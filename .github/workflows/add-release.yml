@@ -9,7 +9,7 @@ jobs:
   release-from-tag:
     permissions:
       contents: write
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout repository
@@ -24,11 +24,14 @@ jobs:
         run: pip install pyinstaller
 
       - name: Build EXE with PyInstaller
-        run: pyinstaller -F --add-data="templates:templates" --add-data="helper.py:." main.py
+        run: pyinstaller -F --add-data="templates;templates" --add-data="helper.py;." main.py
+
+      - name: Rename EXE
+        run: Rename-Item -Path dist\main.exe -NewName my_app.exe
 
       - name: Upload EXE as Release Asset
         uses: softprops/action-gh-release@v2
         with:
-          files: main.exe
+          files: dist/my_app.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
