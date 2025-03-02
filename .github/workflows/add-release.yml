@@ -21,13 +21,15 @@ jobs:
           python-version: '3.13'
 
       - name: Install dependencies
-        run: pip install pyinstaller
+        run: |
+          pip install -r requirements.txt  # Install all dependencies
+          pip install pyinstaller  # Ensure PyInstaller is installed
 
       - name: Build EXE with PyInstaller
         run: pyinstaller -F --add-data="templates;templates" --add-data="helper.py;." main.py
 
       - name: Rename EXE
-        run: Rename-Item -Path dist\main.exe -NewName my_app.exe
+        run: Rename-Item -Path dist\main.exe -NewName main.exe
 
       - name: Upload EXE as Release Asset
         uses: softprops/action-gh-release@v2
