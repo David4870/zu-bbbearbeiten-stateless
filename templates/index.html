@@ -30,6 +30,7 @@
         <div class="ui segment" style="overflow:hidden; position: relative">
             <span class="ui header" style="margin-left: 0.5em;">{{item.text}}</span>
             <span class="ui header" style="margin-left: 1em; color: gray;">{{item.date}}</span>
+	    <a class="ui red button" href="/delete/{{loop.index0}}">Delete</a>
             {% if item.isCompleted %}
             <a class="ui green left corner label" href="/update/{{loop.index0}}"><i
                     class="check square outline icon"></i></a>
