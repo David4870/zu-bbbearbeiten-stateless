@@ -33,3 +33,6 @@ def get(index):
 
 def update(index):
     items[index].isCompleted = not items[index].isCompleted
+
+def delete(index):
+    items.pop(index)
