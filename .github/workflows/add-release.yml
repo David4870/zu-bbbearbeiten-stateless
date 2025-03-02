@@ -61,7 +61,7 @@ jobs:
           run: pyinstaller -F --add-data="templates:templates" --add-data="helper.py:." main.py
 
         - name: Rename Linux Binary
-          run: mv dist/main linux_binary
+          run: mv dist/main dist/linux_binary
 
         - name: Upload Linux Binary to Release
           uses: softprops/action-gh-release@v2
