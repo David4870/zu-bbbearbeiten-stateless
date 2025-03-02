@@ -26,9 +26,6 @@ jobs:
       - name: Build EXE with PyInstaller
         run: pyinstaller -F --add-data="templates:templates" --add-data="helper.py:." main.py
 
-      - name: Rename EXE
-        run: mv dist/main.exe main.exe
-
       - name: Upload EXE as Release Asset
         uses: softprops/action-gh-release@v2
         with:
