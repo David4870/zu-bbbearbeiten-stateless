@@ -24,7 +24,7 @@ jobs:
         run: pip install pyinstaller
 
       - name: Build EXE with PyInstaller
-        run: pyinstaller -F --add-data="templates;templates" --add-data="helper.py;." main.py
+        run: pyinstaller -F --add-data="templates:templates" --add-data="helper.py:." main.py
 
       - name: Rename EXE
         run: mv dist/main.exe main.exe
