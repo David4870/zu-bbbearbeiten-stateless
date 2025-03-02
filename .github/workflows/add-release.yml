@@ -34,6 +34,6 @@ jobs:
       - name: Upload EXE as Release Asset
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/my_app.exe
+          files: dist/main.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
