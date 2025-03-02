@@ -6,7 +6,7 @@ on:
       - "*"
 
 jobs:
-  release-from-tag:
+  build-windows-binary:
     permissions:
       contents: write
     runs-on: windows-latest
@@ -22,10 +22,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt  # Install all dependencies
-          pip install pyinstaller  # Ensure PyInstaller is installed
+          pip install -r requirements.txt
+          pip install pyinstaller
 
-      - name: Build EXE with PyInstaller
+      - name: Build binary with PyInstaller
         run: pyinstaller -F --add-data="templates;templates" --add-data="helper.py;." main.py
 
       - name: Rename EXE
@@ -37,3 +37,35 @@ jobs:
           files: dist/main.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-linux-binary:
+      permissions:
+        contents: write
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+
+        - name: Set up Python
+          uses: actions/setup-python@v4
+          with:
+            python-version: '3.12'
+
+        - name: Install dependencies
+          run: |
+            pip install -r requirements.txt
+            pip install pyinstaller
+
+        - name: Build Linux Binary
+          run: pyinstaller -F --add-data="templates:templates" --add-data="helper.py:." main.py
+
+        - name: Rename Linux Binary
+          run: mv dist/main main
+
+        - name: Upload Linux Binary to Release
+          uses: softprops/action-gh-release@v2
+          with:
+            files: dist/main
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
