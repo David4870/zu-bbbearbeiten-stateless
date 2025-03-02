@@ -11,15 +11,27 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
-          body: "Automated release for tag ${{ github.ref_name }}"
-          draft: false
-          prerelease: false
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.13'  # Replace with your Python version
+
+    - name: Install dependencies
+      run: pip install pyinstaller
+
+    - name: Build EXE with PyInstaller
+      run: pyinstaller -F --add-data="templates;templates" --add-data="helper.py;." main.py
+
+    - name: Rename EXE
+      run: mv dist/main.exe main.exe
+
+    - name: Upload EXE as Release Asset
+      uses: softprops/action-gh-release@v2
+      with:
+        files: main.exe
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
