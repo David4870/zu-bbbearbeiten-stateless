@@ -39,33 +39,51 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-linux-binary:
-      permissions:
-        contents: write
-      runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write  # Required for pushing to GHCR
+    runs-on: ubuntu-latest
 
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-        - name: Set up Python
-          uses: actions/setup-python@v4
-          with:
-            python-version: '3.12'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
 
-        - name: Install dependencies
-          run: |
-            pip install -r requirements.txt
-            pip install pyinstaller
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
 
-        - name: Build Linux Binary
-          run: pyinstaller -F --add-data="templates:templates" --add-data="helper.py:." main.py
+      - name: Build Linux Binary
+        run: pyinstaller -F --add-data="templates:templates" --add-data="helper.py:." main.py
 
-        - name: Rename Linux Binary
-          run: mv dist/main dist/linux_binary
+      - name: Rename Linux Binary
+        run: mv dist/main dist/linux_binary
 
-        - name: Upload Linux Binary to Release
-          uses: softprops/action-gh-release@v2
-          with:
-            files: dist/linux_binary
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload Linux Binary to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/linux_binary
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set lowercase username
+        id: lowercase_username
+        run: echo "actor=${OWNER,,}" >> $GITHUB_ENV
+        env:
+          OWNER: '${{ github.repository_owner }}'
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build Docker Image
+        run: docker build -t flask-app .
+
+      - name: Upload container to GHCR
+        run: |
+          docker tag flask-app ghcr.io/${{ github.repository_owner }}/zu-bbbearbeiten-stateless/flask-app:latest
+          docker push ghcr.io/${{ github.repository_owner }}/zu-bbbearbeiten-stateless/flask-app:latest
